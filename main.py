@@ -4,13 +4,15 @@ import json
 import cmd
 import sys
 import re
+import os
+
 
 # Загальний клас для визначення логикі полів
 class Field:
     def __init__(self, value):
         self.__value = None
         self.value = value
- 
+        
     @property               # Перевірку на коректність поля
     def value(self):
         return self.__value
@@ -95,10 +97,10 @@ class Record:
     def __str__(self):
     
         list_numbers = []
-        line_0 = ('|{:^10}|{:^22}|{:^10}|{:^10}|{:^10}|'.format('name', 'phone', 'birthday', 'teg', 'note'))
+        line_0 = ('|{:^12}|{:^22}|{:^10}|'.format('name', 'phone', 'birthday'))
         list_numbers.append(line_0)
         phon = '; '.join(p.value for p in self.phones)
-        line_1 = ('|{:<10}|{:^22}|{:^10}|{:^10}|{:^10}|'. format(self.name.value, phon, self.birthday, "-", "-"))
+        line_1 = ('|{:<12}|{:^22}|{:^10}|'. format(self.name.value, phon, self.birthday))
         list_numbers.append(line_1)
         for el in list_numbers:
            print(el)
@@ -159,8 +161,60 @@ class Controller(cmd.Cmd):
         self.book.dump()
         return True
     
-book = AddressBook()
+exit_words = ["good bye", "close", "exit", "bye"]
 
+class NoteActions:
+    @staticmethod
+    def add_note(notes, name, title):
+        notes[name] = title
+        return f"Note added: {name}, {title}"
+
+    @staticmethod
+    def edit_note(notes, name, new_title):
+        if name in notes:
+            notes[name] = new_title
+            return f"Note for {name} edited: {new_title}"
+        else:
+            return f"Note for {name} not found."
+
+    @staticmethod
+    def delete_note(notes, name):
+        if name in notes:
+            del notes[name]
+            return f"Note for {name} deleted."
+        else:
+            return f"Note for {name} not found."
+
+class NoteManager:
+    def __init__(self, exit_words=None):
+        self.notes = {}
+        self.exit_words = exit_words or []
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        self.data_file_path = os.path.join(current_directory, "data.txt")
+    
+def save_notes_to_file(self):   #збереження змін у файлі
+        with open(self.data_file_path, "w") as file:
+            for name, title in self.notes.items():
+                file.write(f"{name}, {title}\n")
+
+def load_notes_from_file(self):
+    try:
+        with open(self.data_file_path, "r") as file:
+            lines = file.readlines()
+            for line in lines:
+                name, title = line.strip().split(', ')
+                self.notes[name] = title
+    except FileNotFoundError:
+        pass
+
+def get_note_by_name(self, name):
+    if name in self.notes:
+        return f"Note for {name}: {self.notes[name]}"
+    else:
+        return f"Note for {name} not found."
+    
+book = AddressBook()
+note_actions = NoteActions()
 def hello():
     return "How can I help you?"
 
@@ -175,7 +229,7 @@ def main():
             print(hello())  
             print(hello())
         elif re.search(r'add', s):
-            new_text = s.replace("add ", "").split(" ")
+            new_text = s.replace("add-contact ", "").split(" ")
             john_record = Record(new_text[0])
             john_record.add_phone(new_text[1])
             book.add_record(john_record)
@@ -189,6 +243,22 @@ def main():
         elif re.search(r'show all', s):  
             for name, record in book.data.items():
                 print(record)
+        elif s.lower().startswith('add-not'):
+            first_split = s.split(', ')
+            note_name = first_split[0].split()[1]
+            title = first_split[1]
+            return note_actions.add_note(self.notes, note_name, title)
+        elif s.lower().startswith('edit-not'):
+            edit_split = s.split(', ')
+            note_name = edit_split[0].split()[1]
+            new_title = edit_split[1]
+            return note_actions.edit_note(self.notes, note_name, new_title)
+        elif s.lower().startswith('delete-not'):
+            name_to_delete = s.split(' ')[1]
+            return note_actions.delete_note(self.notes, name_to_delete)
+        elif s.lower().startswith('get '):
+            name_to_get = s.split(' ')[1]
+            return self.get_note_by_name(name_to_get)
         elif s== "good bye" or "close" or "exit":
            exit_handler()
            break
