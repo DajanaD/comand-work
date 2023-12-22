@@ -3,7 +3,7 @@ import datetime
 import json
 import cmd
 import sys
-
+import re
 
 # Загальний клас для визначення логикі полів
 class Field:
@@ -58,7 +58,7 @@ class Record:
     def find_phone(self, phone_number: str):      # пошук в полі "телефон"
         for phone in self.phones:
             if phone.value == phone_number:
-                def formatted_numbers():          # форма для пошуку телефона
+                def formatted_numbers():
                     list_numbers = []
                     line_0 = ('|{:^10}|{:^10}|'.format('name', 'phone'))
                     list_numbers.append(line_0)
@@ -93,7 +93,7 @@ class Record:
             print(f'{result} days left until birthday')
 
     def __str__(self):
-    # загальна форма
+    
         list_numbers = []
         line_0 = ('|{:^10}|{:^22}|{:^10}|{:^10}|{:^10}|'.format('name', 'phone', 'birthday', 'teg', 'note'))
         list_numbers.append(line_0)
@@ -160,3 +160,44 @@ class Controller(cmd.Cmd):
         return True
     
 book = AddressBook()
+
+def hello():
+    return "How can I help you?"
+
+def exit_handler():
+    return "Good bye!"
+
+def main():
+    while True:
+        s = input("...")
+        s = s.lower()       
+        if s == "hello":
+            print(hello())  
+            print(hello())
+        elif re.search(r'add', s):
+            new_text = s.replace("add ", "").split(" ")
+            john_record = Record(new_text[0])
+            john_record.add_phone(new_text[1])
+            book.add_record(john_record)
+        elif re.search(r'change', s):
+            new_text = s.replace("change ", "").split(" ")
+            john = book.find("John")
+            john.edit_phone(new_text)
+        elif re.search(r'phone', s):
+            new_text = s.replace("phone ", "").split(" ")
+            found_phone =john.find_phone(new_text[1])
+        elif re.search(r'show all', s):  
+            for name, record in book.data.items():
+                print(record)
+        elif s== "good bye" or "close" or "exit":
+           exit_handler()
+           break
+        elif s == "good bye" or "close" or "exit":
+            exit_handler()
+            break
+        elif s:
+            print('No command...')
+
+if __name__ == "__main__":
+
+    main()
