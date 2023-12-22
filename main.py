@@ -2,6 +2,7 @@ from collections import UserDict
 import datetime
 import json
 import cmd
+import sys
 
 
 # Загальний клас для визначення логикі полів
@@ -47,6 +48,8 @@ class Record:
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
+        self.birthday = ''
+        self.file = 'AddressBook.txt'
 
     def add_phone(self, phone_number: str):      # додавання в полі "телефон"
         self.phones.append(Phone(phone_number))
@@ -55,8 +58,16 @@ class Record:
     def find_phone(self, phone_number: str):      # пошук в полі "телефон"
         for phone in self.phones:
             if phone.value == phone_number:
+                def formatted_numbers():
+                    list_numbers = []
+                    line_0 = ('|{:^10}|{:^10}|'.format('name', 'phone'))
+                    list_numbers.append(line_0)
+                    line_1 = '|{:<10}|{:^10}|'. format(self.name.value, phone.value)
+                    list_numbers.append(line_1)
+                    return list_numbers
+                for el in formatted_numbers():
+                    print(el)
                 return phone
-
 
     def edit_phone(self, old_phone, new_phone):       # редагування в полі "телефон"
         for phone in self.phones:
@@ -82,7 +93,17 @@ class Record:
             print(f'{result} days left until birthday')
 
     def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
+    
+        list_numbers = []
+        line_0 = ('|{:^10}|{:^22}|{:^10}|{:^10}|{:^10}|'.format('name', 'phone', 'birthday', 'teg', 'note'))
+        list_numbers.append(line_0)
+        phon = '; '.join(p.value for p in self.phones)
+        line_1 = ('|{:<10}|{:^22}|{:^10}|{:^10}|{:^10}|'. format(self.name.value, phon, self.birthday, "-", "-"))
+        list_numbers.append(line_1)
+        for el in list_numbers:
+           print(el)
+       
+        return f"done"
 
 #  Клас для зберігання та управління записами
 class AddressBook(UserDict):
@@ -122,6 +143,7 @@ class AddressBook(UserDict):
 
     def search(self):                       # пошук в запису часткової інформації через ввод із введеного рядка
         info = input()
+        info = info.lower()
         for key, value in self.data.items():
             if info in key:
                 return self.data[key]
@@ -136,3 +158,5 @@ class Controller(cmd.Cmd):
     def exit(self):
         self.book.dump()
         return True
+    
+book = AddressBook()
