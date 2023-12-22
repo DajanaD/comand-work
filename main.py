@@ -58,7 +58,7 @@ class Record:
     def find_phone(self, phone_number: str):      # пошук в полі "телефон"
         for phone in self.phones:
             if phone.value == phone_number:
-                def formatted_numbers():
+                def formatted_numbers():          # форма для пошуку телефона
                     list_numbers = []
                     line_0 = ('|{:^10}|{:^10}|'.format('name', 'phone'))
                     list_numbers.append(line_0)
@@ -93,7 +93,7 @@ class Record:
             print(f'{result} days left until birthday')
 
     def __str__(self):
-    
+    # загальна форма
         list_numbers = []
         line_0 = ('|{:^10}|{:^22}|{:^10}|{:^10}|{:^10}|'.format('name', 'phone', 'birthday', 'teg', 'note'))
         list_numbers.append(line_0)
