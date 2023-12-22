@@ -12,7 +12,7 @@ class Field:
     def __init__(self, value):
         self.__value = None
         self.value = value
- 
+        
     @property               # Перевірку на коректність поля
     def value(self):
         return self.__value
@@ -97,10 +97,10 @@ class Record:
     def __str__(self):
     
         list_numbers = []
-        line_0 = ('|{:^10}|{:^22}|{:^10}|{:^10}|{:^10}|'.format('name', 'phone', 'birthday', 'teg', 'note'))
+        line_0 = ('|{:^12}|{:^22}|{:^10}|'.format('name', 'phone', 'birthday'))
         list_numbers.append(line_0)
         phon = '; '.join(p.value for p in self.phones)
-        line_1 = ('|{:<10}|{:^22}|{:^10}|{:^10}|{:^10}|'. format(self.name.value, phon, self.birthday, "-", "-"))
+        line_1 = ('|{:<12}|{:^22}|{:^10}|'. format(self.name.value, phon, self.birthday))
         list_numbers.append(line_1)
         for el in list_numbers:
            print(el)
@@ -165,12 +165,12 @@ exit_words = ["good bye", "close", "exit", "bye"]
 
 class NoteActions:
     @staticmethod
-    def add_note(notes, name, title):     #додавання нотатків
+    def add_note(notes, name, title):
         notes[name] = title
         return f"Note added: {name}, {title}"
 
     @staticmethod
-    def edit_note(notes, name, new_title):  #редагуваня нотатків
+    def edit_note(notes, name, new_title):
         if name in notes:
             notes[name] = new_title
             return f"Note for {name} edited: {new_title}"
@@ -178,7 +178,7 @@ class NoteActions:
             return f"Note for {name} not found."
 
     @staticmethod
-    def delete_note(notes, name):    #видалення нотатків
+    def delete_note(notes, name):
         if name in notes:
             del notes[name]
             return f"Note for {name} deleted."
@@ -229,7 +229,7 @@ def main():
             print(hello())  
             print(hello())
         elif re.search(r'add', s):
-            new_text = s.replace("add ", "").split(" ")
+            new_text = s.replace("add-contact ", "").split(" ")
             john_record = Record(new_text[0])
             john_record.add_phone(new_text[1])
             book.add_record(john_record)
